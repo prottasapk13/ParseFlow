@@ -3,6 +3,8 @@
 
 %{
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "parser.tab.h"
 %}
 
@@ -31,9 +33,9 @@ FLOATNUM    {DIGIT}+"."{DIGIT}+
 "<="                { return LE; }
 ">="                { return GE; }
 
-{FLOATNUM}          { return FLOAT_LITERAL; }
-{NUMBER}            { return INTEGER_LITERAL; }
-{ID}                { return IDENTIFIER; }
+{FLOATNUM}          { yylval.str = strdup(yytext); return FLOAT_LITERAL; }
+{NUMBER}            { yylval.str = strdup(yytext); return INTEGER_LITERAL; }
+{ID}                { yylval.str = strdup(yytext); return IDENTIFIER; }
 
 "+"                 { return '+'; }
 "-"                 { return '-'; }

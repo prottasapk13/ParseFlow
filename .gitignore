@@ -62,3 +62,7 @@ src/parser/parser.tab.h
 # Temporary test files
 test.txt
 invalid.txt
+
+# AST testing and temporary backup
+control_test.txt
+src/parser/parser_backup.y

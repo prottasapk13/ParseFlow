@@ -1,18 +1,51 @@
 
+%code requires {
+#include "../ast/ast.h"
+}
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "../ast/ast.h"
 
 int yylex(void);
 void yyerror(const char *s);
+
+static ASTNode *appendNode(ASTNode *list, ASTNode *node)
+{
+    if (list == NULL)
+        return node;
+
+    ASTNode *temp = list;
+
+    while (temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = node;
+    return list;
+}
+
+ASTNode *root = NULL;
 %}
+
+%union {
+    char *str;
+    ASTNode *node;
+}
 
 %token INT FLOAT BOOL
 %token IF ELSE WHILE PRINT
 %token TRUE FALSE
-%token IDENTIFIER
-%token INTEGER_LITERAL FLOAT_LITERAL
 %token AND OR EQ NE LE GE
+
+%token <str> IDENTIFIER INTEGER_LITERAL FLOAT_LITERAL
+
+%type <str> type
+%type <node> program optional_statements statements
+%type <node> statement declaration assignment
+%type <node> print_statement if_statement while_statement
+%type <node> block expression
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
@@ -26,80 +59,225 @@ void yyerror(const char *s);
 %right '!'
 %right UMINUS
 
+%start program
+
 %%
 
 program:
+    optional_statements
+    {
+        root = createNode(NODE_PROGRAM, "Program", $1, NULL);
+        $$ = root;
+    }
+    ;
+
+optional_statements:
     statements
+    {
+        $$ = $1;
+    }
+    |
+    {
+        $$ = NULL;
+    }
     ;
 
 statements:
+    statement
+    {
+        $$ = $1;
+    }
+    |
     statements statement
-    | statement
+    {
+        $$ = appendNode($1, $2);
+    }
     ;
 
 statement:
-    declaration ';'
-    | assignment ';'
-    | print_statement ';'
-    | if_statement
-    | while_statement
-    | block
+    declaration ';'       { $$ = $1; }
+    | assignment ';'      { $$ = $1; }
+    | print_statement ';' { $$ = $1; }
+    | if_statement        { $$ = $1; }
+    | while_statement    { $$ = $1; }
+    | block               { $$ = $1; }
     ;
 
 declaration:
     type IDENTIFIER
-    | type IDENTIFIER '=' expression
+    {
+        $$ = createNode(NODE_DECLARATION, $1,
+             createNode(NODE_IDENTIFIER, $2, NULL, NULL), NULL);
+        free($1);
+        free($2);
+    }
+    |
+    type IDENTIFIER '=' expression
+    {
+        $$ = createNode(NODE_DECLARATION, $1,
+             createNode(NODE_IDENTIFIER, $2, NULL, NULL), $4);
+        free($1);
+        free($2);
+    }
     ;
 
 type:
-    INT
-    | FLOAT
-    | BOOL
+    INT   { $$ = strdup("int"); }
+    | FLOAT { $$ = strdup("float"); }
+    | BOOL  { $$ = strdup("bool"); }
     ;
 
 assignment:
     IDENTIFIER '=' expression
+    {
+        $$ = createNode(NODE_ASSIGNMENT, "=",
+             createNode(NODE_IDENTIFIER, $1, NULL, NULL), $3);
+        free($1);
+    }
     ;
 
 print_statement:
     PRINT '(' expression ')'
+    {
+        $$ = createNode(NODE_PRINT, "print", $3, NULL);
+    }
     ;
 
 if_statement:
     IF '(' expression ')' statement %prec LOWER_THAN_ELSE
-    | IF '(' expression ')' statement ELSE statement
+    {
+        $$ = createNode(NODE_IF, "if", $3, $5);
+    }
+    |
+    IF '(' expression ')' statement ELSE statement
+    {
+        $5->next = $7;
+        $$ = createNode(NODE_IF, "if-else", $3, $5);
+    }
     ;
 
 while_statement:
     WHILE '(' expression ')' statement
+    {
+        $$ = createNode(NODE_WHILE, "while", $3, $5);
+    }
     ;
 
 block:
-    '{' statements '}'
+    '{' optional_statements '}'
+    {
+        $$ = createNode(NODE_BLOCK, "block", $2, NULL);
+    }
     ;
 
 expression:
     INTEGER_LITERAL
-    | FLOAT_LITERAL
-    | TRUE
-    | FALSE
-    | IDENTIFIER
-    | '(' expression ')'
-    | '-' expression %prec UMINUS
-    | '!' expression
-    | expression '+' expression
-    | expression '-' expression
-    | expression '*' expression
-    | expression '/' expression
-    | expression '%' expression
-    | expression '<' expression
-    | expression '>' expression
-    | expression LE expression
-    | expression GE expression
-    | expression EQ expression
-    | expression NE expression
-    | expression AND expression
-    | expression OR expression
+    {
+        $$ = createNode(NODE_INTEGER, $1, NULL, NULL);
+        free($1);
+    }
+    |
+    FLOAT_LITERAL
+    {
+        $$ = createNode(NODE_FLOAT, $1, NULL, NULL);
+        free($1);
+    }
+    |
+    TRUE
+    {
+        $$ = createNode(NODE_BOOLEAN, "true", NULL, NULL);
+    }
+    |
+    FALSE
+    {
+        $$ = createNode(NODE_BOOLEAN, "false", NULL, NULL);
+    }
+    |
+    IDENTIFIER
+    {
+        $$ = createNode(NODE_IDENTIFIER, $1, NULL, NULL);
+        free($1);
+    }
+    |
+    '(' expression ')'
+    {
+        $$ = $2;
+    }
+    |
+    '-' expression %prec UMINUS
+    {
+        $$ = createNode(NODE_UNARY, "-", $2, NULL);
+    }
+    |
+    '!' expression
+    {
+        $$ = createNode(NODE_UNARY, "!", $2, NULL);
+    }
+    |
+    expression '+' expression
+    {
+        $$ = createNode(NODE_BINARY, "+", $1, $3);
+    }
+    |
+    expression '-' expression
+    {
+        $$ = createNode(NODE_BINARY, "-", $1, $3);
+    }
+    |
+    expression '*' expression
+    {
+        $$ = createNode(NODE_BINARY, "*", $1, $3);
+    }
+    |
+    expression '/' expression
+    {
+        $$ = createNode(NODE_BINARY, "/", $1, $3);
+    }
+    |
+    expression '%' expression
+    {
+        $$ = createNode(NODE_BINARY, "%", $1, $3);
+    }
+    |
+    expression '<' expression
+    {
+        $$ = createNode(NODE_BINARY, "<", $1, $3);
+    }
+    |
+    expression '>' expression
+    {
+        $$ = createNode(NODE_BINARY, ">", $1, $3);
+    }
+    |
+    expression LE expression
+    {
+        $$ = createNode(NODE_BINARY, "<=", $1, $3);
+    }
+    |
+    expression GE expression
+    {
+        $$ = createNode(NODE_BINARY, ">=", $1, $3);
+    }
+    |
+    expression EQ expression
+    {
+        $$ = createNode(NODE_BINARY, "==", $1, $3);
+    }
+    |
+    expression NE expression
+    {
+        $$ = createNode(NODE_BINARY, "!=", $1, $3);
+    }
+    |
+    expression AND expression
+    {
+        $$ = createNode(NODE_BINARY, "&&", $1, $3);
+    }
+    |
+    expression OR expression
+    {
+        $$ = createNode(NODE_BINARY, "||", $1, $3);
+    }
     ;
 
 %%
@@ -112,10 +290,14 @@ void yyerror(const char *s)
 int main(void)
 {
     printf("ParseFlow Compiler\n");
-    printf("Enter your code:\n");
+    printf("Enter your code:\n\n");
 
-    if (yyparse() == 0)
+    if (yyparse() == 0) {
         printf("\nSyntax analysis successful!\n");
+        printf("\nAbstract Syntax Tree:\n");
+        printAST(root, 0);
+    }
 
+    freeAST(root);
     return 0;
 }
