@@ -21,6 +21,7 @@ typedef enum {
 typedef struct ASTNode {
     NodeType type;
     char *value;
+    int line_number;
 
     struct ASTNode *left;
     struct ASTNode *right;

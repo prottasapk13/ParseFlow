@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.tab.h"
+
+#define YY_USER_ACTION \
+    yylloc.first_line = yylineno; \
+    yylloc.last_line = yylineno;
 %}
 
 DIGIT       [0-9]

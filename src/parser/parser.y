@@ -3,11 +3,14 @@
 #include "../ast/ast.h"
 }
 
+%locations
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../ast/ast.h"
+#include "../semantic/semantic.h"
 
 int yylex(void);
 void yyerror(const char *s);
@@ -103,11 +106,15 @@ statement:
     | block               { $$ = $1; }
     ;
 
+
 declaration:
     type IDENTIFIER
     {
         $$ = createNode(NODE_DECLARATION, $1,
              createNode(NODE_IDENTIFIER, $2, NULL, NULL), NULL);
+
+        $$->line_number = @2.first_line;
+
         free($1);
         free($2);
     }
@@ -116,6 +123,9 @@ declaration:
     {
         $$ = createNode(NODE_DECLARATION, $1,
              createNode(NODE_IDENTIFIER, $2, NULL, NULL), $4);
+
+        $$->line_number = @2.first_line;
+
         free($1);
         free($2);
     }
@@ -127,11 +137,16 @@ type:
     | BOOL  { $$ = strdup("bool"); }
     ;
 
+
 assignment:
     IDENTIFIER '=' expression
     {
         $$ = createNode(NODE_ASSIGNMENT, "=",
              createNode(NODE_IDENTIFIER, $1, NULL, NULL), $3);
+
+        $$->line_number = @1.first_line;
+        $$->left->line_number = @1.first_line;
+
         free($1);
     }
     ;
@@ -143,16 +158,19 @@ print_statement:
     }
     ;
 
+     
 if_statement:
     IF '(' expression ')' statement %prec LOWER_THAN_ELSE
     {
         $$ = createNode(NODE_IF, "if", $3, $5);
+        $$->line_number = @1.first_line;
     }
     |
     IF '(' expression ')' statement ELSE statement
     {
         $5->next = $7;
         $$ = createNode(NODE_IF, "if-else", $3, $5);
+        $$->line_number = @1.first_line;
     }
     ;
 
@@ -160,8 +178,11 @@ while_statement:
     WHILE '(' expression ')' statement
     {
         $$ = createNode(NODE_WHILE, "while", $3, $5);
+        $$->line_number = @1.first_line;
     }
     ;
+
+    
 
 block:
     '{' optional_statements '}'
@@ -193,11 +214,16 @@ expression:
         $$ = createNode(NODE_BOOLEAN, "false", NULL, NULL);
     }
     |
+
     IDENTIFIER
     {
-        $$ = createNode(NODE_IDENTIFIER, $1, NULL, NULL);
-        free($1);
+       
+    $$ = createNode(NODE_IDENTIFIER, $1, NULL, NULL);
+    $$->line_number = @1.first_line;
+    free($1);
+ 
     }
+
     |
     '(' expression ')'
     {
@@ -296,6 +322,8 @@ int main(void)
         printf("\nSyntax analysis successful!\n");
         printf("\nAbstract Syntax Tree:\n");
         printAST(root, 0);
+
+        analyzeSemantics(root);
     }
 
     freeAST(root);

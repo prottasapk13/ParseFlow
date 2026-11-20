@@ -16,6 +16,7 @@ ASTNode *createNode(NodeType type, const char *value,
 
     node->type = type;
     node->value = value ? strdup(value) : NULL;
+    node->line_number = 0;
     node->left = left;
     node->right = right;
     node->next = NULL;
