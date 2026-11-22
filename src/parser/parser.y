@@ -11,6 +11,7 @@
 #include <string.h>
 #include "../ast/ast.h"
 #include "../semantic/semantic.h"
+#include "../tac/tac.h"
 
 int yylex(void);
 void yyerror(const char *s);
@@ -324,6 +325,8 @@ int main(void)
         printAST(root, 0);
 
         analyzeSemantics(root);
+	generateTAC(root);
+	
     }
 
     freeAST(root);
