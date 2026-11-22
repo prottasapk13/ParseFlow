@@ -40,16 +40,23 @@ static const char *checkExpression(ASTNode *node)
         if (strcmp(node->value, "!") == 0) {
             if (strcmp(type, "bool") != 0 &&
                 strcmp(type, "unknown") != 0) {
-                printf("Semantic Error: Logical NOT requires bool\n");
+
+                printf("Semantic Error at line %d: Logical NOT requires bool\n",
+                       node->line_number);
+
                 semanticErrors++;
             }
+
             return "bool";
         }
 
         if (strcmp(type, "int") != 0 &&
             strcmp(type, "float") != 0 &&
             strcmp(type, "unknown") != 0) {
-            printf("Semantic Error: Unary minus requires a number\n");
+
+            printf("Semantic Error at line %d: Unary minus requires a number\n",
+                   node->line_number);
+
             semanticErrors++;
         }
 
@@ -66,27 +73,38 @@ static const char *checkExpression(ASTNode *node)
                  strcmp(left, "unknown") != 0) ||
                 (strcmp(right, "bool") != 0 &&
                  strcmp(right, "unknown") != 0)) {
-                printf("Semantic Error: Logical operators require bool operands\n");
+
+                printf("Semantic Error at line %d: Logical operators require bool operands\n",
+                       node->line_number);
+
                 semanticErrors++;
             }
+
             return "bool";
         }
 
         if (strcmp(op, "==") == 0 || strcmp(op, "!=") == 0 ||
             strcmp(op, "<") == 0 || strcmp(op, ">") == 0 ||
             strcmp(op, "<=") == 0 || strcmp(op, ">=") == 0) {
+
             return "bool";
         }
 
-        if (strcmp(left, "bool") == 0 || strcmp(right, "bool") == 0) {
-            printf("Semantic Error: Arithmetic operators require numeric operands\n");
+        if (strcmp(left, "bool") == 0 ||
+            strcmp(right, "bool") == 0) {
+
+            printf("Semantic Error at line %d: Arithmetic operators require numeric operands\n",
+                   node->line_number);
+
             semanticErrors++;
             return "unknown";
         }
 
         if (strcmp(left, "float") == 0 ||
-            strcmp(right, "float") == 0)
+            strcmp(right, "float") == 0) {
+
             return "float";
+        }
 
         return left;
     }
@@ -108,6 +126,7 @@ static void analyzeNode(ASTNode *node)
 
             if (!insertSymbol(identifier->value, node->value,
                               node->line_number)) {
+
                 printf("Semantic Error at line %d: Redeclaration of '%s'\n",
                        node->line_number, identifier->value);
 
@@ -128,6 +147,7 @@ static void analyzeNode(ASTNode *node)
                     semanticErrors++;
                 }
             }
+
             break;
         }
 
@@ -154,6 +174,7 @@ static void analyzeNode(ASTNode *node)
                     semanticErrors++;
                 }
             }
+
             break;
         }
 

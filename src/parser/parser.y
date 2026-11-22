@@ -191,40 +191,41 @@ block:
         $$ = createNode(NODE_BLOCK, "block", $2, NULL);
     }
     ;
-
+   
+	
 expression:
     INTEGER_LITERAL
     {
         $$ = createNode(NODE_INTEGER, $1, NULL, NULL);
+        $$->line_number = @1.first_line;
         free($1);
     }
     |
     FLOAT_LITERAL
     {
         $$ = createNode(NODE_FLOAT, $1, NULL, NULL);
+        $$->line_number = @1.first_line;
         free($1);
     }
     |
     TRUE
     {
         $$ = createNode(NODE_BOOLEAN, "true", NULL, NULL);
+        $$->line_number = @1.first_line;
     }
     |
     FALSE
     {
         $$ = createNode(NODE_BOOLEAN, "false", NULL, NULL);
+        $$->line_number = @1.first_line;
     }
     |
-
     IDENTIFIER
     {
-       
-    $$ = createNode(NODE_IDENTIFIER, $1, NULL, NULL);
-    $$->line_number = @1.first_line;
-    free($1);
- 
+        $$ = createNode(NODE_IDENTIFIER, $1, NULL, NULL);
+        $$->line_number = @1.first_line;
+        free($1);
     }
-
     |
     '(' expression ')'
     {
@@ -234,78 +235,88 @@ expression:
     '-' expression %prec UMINUS
     {
         $$ = createNode(NODE_UNARY, "-", $2, NULL);
+        $$->line_number = @1.first_line;
     }
     |
     '!' expression
     {
         $$ = createNode(NODE_UNARY, "!", $2, NULL);
+        $$->line_number = @1.first_line;
     }
     |
     expression '+' expression
     {
         $$ = createNode(NODE_BINARY, "+", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression '-' expression
     {
         $$ = createNode(NODE_BINARY, "-", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression '*' expression
     {
         $$ = createNode(NODE_BINARY, "*", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression '/' expression
     {
         $$ = createNode(NODE_BINARY, "/", $1, $3);
-    }
-    |
-    expression '%' expression
-    {
-        $$ = createNode(NODE_BINARY, "%", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression '<' expression
     {
         $$ = createNode(NODE_BINARY, "<", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression '>' expression
     {
         $$ = createNode(NODE_BINARY, ">", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression LE expression
     {
         $$ = createNode(NODE_BINARY, "<=", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression GE expression
     {
         $$ = createNode(NODE_BINARY, ">=", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression EQ expression
     {
         $$ = createNode(NODE_BINARY, "==", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression NE expression
     {
         $$ = createNode(NODE_BINARY, "!=", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression AND expression
     {
         $$ = createNode(NODE_BINARY, "&&", $1, $3);
+        $$->line_number = @2.first_line;
     }
     |
     expression OR expression
     {
         $$ = createNode(NODE_BINARY, "||", $1, $3);
+        $$->line_number = @2.first_line;
     }
     ;
+
 
 %%
 
