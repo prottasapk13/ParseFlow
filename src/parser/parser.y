@@ -311,7 +311,8 @@ expression:
 
 void yyerror(const char *s)
 {
-    fprintf(stderr, "Syntax error: %s\n", s);
+    fprintf(stderr, "Syntax Error at line %d: %s\n",
+            yylloc.first_line, s);
 }
 
 int main(void)
