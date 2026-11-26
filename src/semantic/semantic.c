@@ -100,6 +100,20 @@ static const char *checkExpression(ASTNode *node)
             return "unknown";
         }
 
+                  if (strcmp(op, "%") == 0) {
+            if (strcmp(left, "int") != 0 ||
+                strcmp(right, "int") != 0) {
+
+                printf("Semantic Error at line %d: Modulo operator requires integer operands\n",
+                       node->line_number);
+
+                semanticErrors++;
+                return "unknown";
+            }
+
+            return "int";
+        }
+
         if (strcmp(left, "float") == 0 ||
             strcmp(right, "float") == 0) {
 

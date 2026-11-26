@@ -279,6 +279,13 @@ expression:
         $$->line_number = @2.first_line;
     }
     |
+     
+         expression '%' expression
+    {
+        $$ = createNode(NODE_BINARY, "%", $1, $3);
+        $$->line_number = @2.first_line;
+    }
+    |
     expression '<' expression
     {
         $$ = createNode(NODE_BINARY, "<", $1, $3);
