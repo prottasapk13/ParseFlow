@@ -156,9 +156,20 @@ print_statement:
     PRINT '(' expression ')'
     {
         $$ = createNode(NODE_PRINT, "print", $3, NULL);
+        $$->line_number = @1.first_line;
+    }
+    |
+    PRINT IDENTIFIER
+    {
+        $$ = createNode(NODE_PRINT, "print",
+             createNode(NODE_IDENTIFIER, $2, NULL, NULL), NULL);
+
+        $$->line_number = @1.first_line;
+        $$->left->line_number = @2.first_line;
+
+        free($2);
     }
     ;
-
      
 if_statement:
     IF '(' expression ')' statement %prec LOWER_THAN_ELSE
