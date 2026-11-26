@@ -336,8 +336,13 @@ int main(void)
         printf("\nAbstract Syntax Tree:\n");
         printAST(root, 0);
 
-        analyzeSemantics(root);
-	generateTAC(root);
+        int errors = analyzeSemantics(root);
+
+if (errors == 0) {
+    generateTAC(root);
+} else {
+    printf("\nTAC generation skipped due to semantic errors.\n");
+}
 	
     }
 

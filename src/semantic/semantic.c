@@ -218,7 +218,7 @@ static void analyzeList(ASTNode *node)
     }
 }
 
-void analyzeSemantics(ASTNode *root)
+int analyzeSemantics(ASTNode *root)
 {
     semanticErrors = 0;
 
@@ -238,4 +238,6 @@ void analyzeSemantics(ASTNode *root)
 
     printSymbolTable();
     freeSymbolTable();
+    
+     return semanticErrors;
 }

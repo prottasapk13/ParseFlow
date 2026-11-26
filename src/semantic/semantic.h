@@ -4,6 +4,7 @@
 
 #include "../ast/ast.h"
 
-void analyzeSemantics(ASTNode *root);
+int analyzeSemantics(ASTNode *root);
 
 #endif
+
