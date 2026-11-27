@@ -6,6 +6,7 @@
 
 static int semanticErrors = 0;
 
+
 static const char *checkExpression(ASTNode *node)
 {
     if (node == NULL)
@@ -41,7 +42,7 @@ static const char *checkExpression(ASTNode *node)
             if (strcmp(type, "bool") != 0 &&
                 strcmp(type, "unknown") != 0) {
 
-                printf("Semantic Error at line %d: Logical NOT requires bool\n",
+                printf("Semantic Error at line %d: Logical NOT requires a bool operand\n",
                        node->line_number);
 
                 semanticErrors++;
@@ -87,6 +88,21 @@ static const char *checkExpression(ASTNode *node)
             strcmp(op, "<") == 0 || strcmp(op, ">") == 0 ||
             strcmp(op, "<=") == 0 || strcmp(op, ">=") == 0) {
 
+            if (strcmp(left, "unknown") == 0 ||
+                strcmp(right, "unknown") == 0) {
+                return "bool";
+            }
+
+            if (strcmp(left, right) != 0 ||
+                (strcmp(left, "int") != 0 &&
+                 strcmp(left, "float") != 0)) {
+
+                printf("Semantic Error at line %d: Relational operators require compatible numeric operands\n",
+                       node->line_number);
+
+                semanticErrors++;
+            }
+
             return "bool";
         }
 
@@ -100,7 +116,7 @@ static const char *checkExpression(ASTNode *node)
             return "unknown";
         }
 
-                  if (strcmp(op, "%") == 0) {
+        if (strcmp(op, "%") == 0) {
             if (strcmp(left, "int") != 0 ||
                 strcmp(right, "int") != 0) {
 
@@ -116,7 +132,6 @@ static const char *checkExpression(ASTNode *node)
 
         if (strcmp(left, "float") == 0 ||
             strcmp(right, "float") == 0) {
-
             return "float";
         }
 
@@ -125,6 +140,9 @@ static const char *checkExpression(ASTNode *node)
 
     return "unknown";
 }
+
+     
+       
 
 static void analyzeList(ASTNode *node);
 
