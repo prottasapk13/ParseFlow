@@ -27,7 +27,6 @@ static const char *checkExpression(ASTNode *node)
         if (symbol == NULL) {
             printf("Semantic Error at line %d: Undeclared variable '%s'\n",
                    node->line_number, node->value);
-
             semanticErrors++;
             return "unknown";
         }
@@ -41,23 +40,18 @@ static const char *checkExpression(ASTNode *node)
         if (strcmp(node->value, "!") == 0) {
             if (strcmp(type, "bool") != 0 &&
                 strcmp(type, "unknown") != 0) {
-
                 printf("Semantic Error at line %d: Logical NOT requires a bool operand\n",
                        node->line_number);
-
                 semanticErrors++;
             }
-
             return "bool";
         }
 
         if (strcmp(type, "int") != 0 &&
             strcmp(type, "float") != 0 &&
             strcmp(type, "unknown") != 0) {
-
             printf("Semantic Error at line %d: Unary minus requires a number\n",
                    node->line_number);
-
             semanticErrors++;
         }
 
@@ -74,44 +68,46 @@ static const char *checkExpression(ASTNode *node)
                  strcmp(left, "unknown") != 0) ||
                 (strcmp(right, "bool") != 0 &&
                  strcmp(right, "unknown") != 0)) {
-
                 printf("Semantic Error at line %d: Logical operators require bool operands\n",
                        node->line_number);
-
                 semanticErrors++;
             }
-
             return "bool";
         }
 
-        if (strcmp(op, "==") == 0 || strcmp(op, "!=") == 0 ||
-            strcmp(op, "<") == 0 || strcmp(op, ">") == 0 ||
-            strcmp(op, "<=") == 0 || strcmp(op, ">=") == 0) {
-
+        if (strcmp(op, "==") == 0 || strcmp(op, "!=") == 0) {
             if (strcmp(left, "unknown") == 0 ||
-                strcmp(right, "unknown") == 0) {
+                strcmp(right, "unknown") == 0)
                 return "bool";
+
+            if (strcmp(left, right) != 0) {
+                printf("Semantic Error at line %d: Equality operators require operands of compatible types\n",
+                       node->line_number);
+                semanticErrors++;
             }
+            return "bool";
+        }
+
+        if (strcmp(op, "<") == 0 || strcmp(op, ">") == 0 ||
+            strcmp(op, "<=") == 0 || strcmp(op, ">=") == 0) {
+            if (strcmp(left, "unknown") == 0 ||
+                strcmp(right, "unknown") == 0)
+                return "bool";
 
             if (strcmp(left, right) != 0 ||
                 (strcmp(left, "int") != 0 &&
                  strcmp(left, "float") != 0)) {
-
                 printf("Semantic Error at line %d: Relational operators require compatible numeric operands\n",
                        node->line_number);
-
                 semanticErrors++;
             }
-
             return "bool";
         }
 
         if (strcmp(left, "bool") == 0 ||
             strcmp(right, "bool") == 0) {
-
             printf("Semantic Error at line %d: Arithmetic operators require numeric operands\n",
                    node->line_number);
-
             semanticErrors++;
             return "unknown";
         }
@@ -119,27 +115,25 @@ static const char *checkExpression(ASTNode *node)
         if (strcmp(op, "%") == 0) {
             if (strcmp(left, "int") != 0 ||
                 strcmp(right, "int") != 0) {
-
                 printf("Semantic Error at line %d: Modulo operator requires integer operands\n",
                        node->line_number);
-
                 semanticErrors++;
                 return "unknown";
             }
-
             return "int";
         }
 
         if (strcmp(left, "float") == 0 ||
-            strcmp(right, "float") == 0) {
+            strcmp(right, "float") == 0)
             return "float";
-        }
 
         return left;
     }
 
     return "unknown";
 }
+
+
 
      
        
