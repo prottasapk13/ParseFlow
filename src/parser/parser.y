@@ -16,6 +16,7 @@
 int yylex(void);
 void yyerror(const char *s);
 static int syntaxErrors = 0;
+extern int lexicalErrors;
 
 static ASTNode *appendNode(ASTNode *list, ASTNode *node)
 {
@@ -358,24 +359,28 @@ int main(void)
         
     if (yyparse() == 0) {
 
-    if (syntaxErrors == 0) {
-        printf("\nSyntax analysis successful!\n");
-    } else {
-        printf("\nSyntax analysis completed with errors (recovered).\n");
-    }
-
+    if (lexicalErrors > 0) {
+    printf("\nCompilation stopped due to lexical errors.\n");
+} else if (syntaxErrors == 0) {
+    printf("\nSyntax analysis successful!\n");
+} else {
+    printf("\nSyntax analysis completed with errors (recovered).\n");
+}
     printf("\nAbstract Syntax Tree:\n");
     
         printAST(root, 0);
 
-        int errors = analyzeSemantics(root);
-
-if (errors == 0) {
-    generateTAC(root);
+        if (lexicalErrors > 0) {
+    printf("\nSemantic analysis and TAC generation skipped due to lexical errors.\n");
 } else {
-    printf("\nTAC generation skipped due to semantic errors.\n");
-}
-	
+    int errors = analyzeSemantics(root);
+
+    if (errors == 0) {
+        generateTAC(root);
+    } else {
+        printf("\nTAC generation skipped due to semantic errors.\n");
+    }
+}	
     }
 
     freeAST(root);

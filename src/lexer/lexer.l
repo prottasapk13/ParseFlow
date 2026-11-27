@@ -6,11 +6,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.tab.h"
+int lexicalErrors = 0;
+
 
 #define YY_USER_ACTION \
     yylloc.first_line = yylineno; \
     yylloc.last_line = yylineno;
 %}
+
+%x COMMENT
 
 DIGIT       [0-9]
 LETTER      [a-zA-Z_]
@@ -60,6 +64,20 @@ FLOATNUM    {DIGIT}+"."{DIGIT}+
 
 [ \t\r]+            ;
 \n                  ;
+
+"/*"                { BEGIN(COMMENT); }
+
+<COMMENT>[^*\n]+     ;
+<COMMENT>"*"+[^*/\n]* ;
+<COMMENT>\n          ;
+<COMMENT>"*"+"/"     { BEGIN(INITIAL); }
+
+<COMMENT><<EOF>> {
+    printf("Lexical Error at line %d: Unterminated block comment\n", yylineno);
+    BEGIN(INITIAL);
+    lexicalErrors++;
+    return 0;
+}
 
 "//".*              ;
 
