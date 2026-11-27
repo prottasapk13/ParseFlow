@@ -361,9 +361,14 @@ int main(void)
 
     if (lexicalErrors > 0) {
     printf("\nCompilation stopped due to lexical errors.\n");
-} else if (syntaxErrors == 0) {
+    printf("Total lexical errors: %d\n", lexicalErrors);
+} 
+
+
+else if (syntaxErrors == 0) {
     printf("\nSyntax analysis successful!\n");
-} else {
+}
+ else {
     printf("\nSyntax analysis completed with errors (recovered).\n");
 }
     printf("\nAbstract Syntax Tree:\n");

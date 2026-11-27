@@ -81,6 +81,9 @@ FLOATNUM    {DIGIT}+"."{DIGIT}+
 
 "//".*              ;
 
-.                   { printf("Lexical error at line %d: %s\n", yylineno, yytext); }
+. {
+    printf("Lexical Error at line %d: %s\n", yylineno, yytext);
+    lexicalErrors++;
+}
 
 %%
