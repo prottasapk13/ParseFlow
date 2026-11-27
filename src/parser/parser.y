@@ -15,6 +15,7 @@
 
 int yylex(void);
 void yyerror(const char *s);
+static int syntaxErrors = 0;
 
 static ASTNode *appendNode(ASTNode *list, ASTNode *node)
 {
@@ -98,15 +99,19 @@ statements:
     }
     ;
 
-statement:
+     statement:
     declaration ';'       { $$ = $1; }
     | assignment ';'      { $$ = $1; }
     | print_statement ';' { $$ = $1; }
     | if_statement        { $$ = $1; }
-    | while_statement    { $$ = $1; }
+    | while_statement     { $$ = $1; }
     | block               { $$ = $1; }
+    | error ';'
+    {
+        $$ = NULL;
+        yyerrok;
+    }
     ;
-
 
 declaration:
     type IDENTIFIER
@@ -340,6 +345,8 @@ expression:
 
 void yyerror(const char *s)
 {
+    syntaxErrors++;
+
     fprintf(stderr, "Syntax Error at line %d: %s\n",
             yylloc.first_line, s);
 }
@@ -348,10 +355,17 @@ int main(void)
 {
     printf("ParseFlow Compiler\n");
     printf("Enter your code:\n\n");
-
+        
     if (yyparse() == 0) {
+
+    if (syntaxErrors == 0) {
         printf("\nSyntax analysis successful!\n");
-        printf("\nAbstract Syntax Tree:\n");
+    } else {
+        printf("\nSyntax analysis completed with errors (recovered).\n");
+    }
+
+    printf("\nAbstract Syntax Tree:\n");
+    
         printAST(root, 0);
 
         int errors = analyzeSemantics(root);
