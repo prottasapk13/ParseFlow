@@ -377,6 +377,8 @@ else if (syntaxErrors == 0) {
 
         if (lexicalErrors > 0) {
     printf("\nSemantic analysis and TAC generation skipped due to lexical errors.\n");
+} else if (syntaxErrors > 0) {
+    printf("\nSemantic analysis and TAC generation skipped due to syntax errors.\n");
 } else {
     int errors = analyzeSemantics(root);
 
