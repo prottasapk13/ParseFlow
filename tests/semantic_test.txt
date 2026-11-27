@@ -1,0 +1,11 @@
+int x = 10;
+
+x = true;
+
+y = 5;
+
+int x = 20;
+
+if (x) {
+    print(y);
+}
