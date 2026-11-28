@@ -1,0 +1,20 @@
+ParseFlow Compiler
+Enter your code:
+
+Lexical Error at line 3: @
+
+Compilation stopped due to lexical errors.
+Total lexical errors: 1
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: a
+    INTEGER: 10
+  DECLARATION: int
+    IDENTIFIER: b
+    INTEGER: 20
+  PRINT: print
+    IDENTIFIER: c
+
+Semantic analysis and TAC generation skipped due to lexical errors.

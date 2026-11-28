@@ -1,0 +1,32 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: bool
+    IDENTIFIER: flag
+    BOOLEAN: true
+  DECLARATION: int
+    IDENTIFIER: result
+  ASSIGNMENT: =
+    IDENTIFIER: result
+    BINARY: +
+      IDENTIFIER: flag
+      INTEGER: 5
+Semantic Error at line 4: Arithmetic operators require numeric operands
+
+Semantic Analysis:
+Total semantic errors: 1
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+result          int        0          2
+flag            bool       0          1
+---------------------------------------------
+
+TAC generation skipped due to semantic errors.

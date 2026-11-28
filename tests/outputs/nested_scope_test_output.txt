@@ -1,0 +1,43 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: x
+    INTEGER: 10
+  BLOCK: block
+    DECLARATION: int
+      IDENTIFIER: x
+      INTEGER: 20
+    BLOCK: block
+      DECLARATION: int
+        IDENTIFIER: x
+        INTEGER: 30
+      PRINT: print
+        IDENTIFIER: x
+    PRINT: print
+      IDENTIFIER: x
+  PRINT: print
+    IDENTIFIER: x
+
+Semantic Analysis:
+No semantic errors found!
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+x               int        0          1
+---------------------------------------------
+
+Three Address Code:
+x = 10
+x_scope1 = 20
+x_scope2 = 30
+print x_scope2
+print x_scope1
+print x

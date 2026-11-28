@@ -1,0 +1,42 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: x
+    INTEGER: 10
+  ASSIGNMENT: =
+    IDENTIFIER: x
+    BOOLEAN: true
+  ASSIGNMENT: =
+    IDENTIFIER: y
+    INTEGER: 5
+  DECLARATION: int
+    IDENTIFIER: x
+    INTEGER: 20
+  IF: if
+    IDENTIFIER: x
+    BLOCK: block
+      PRINT: print
+        IDENTIFIER: y
+Semantic Error at line 3: Type mismatch in assignment to 'x'
+Semantic Error at line 5: Undeclared variable 'y'
+Semantic Error at line 7: Redeclaration of 'x'
+Semantic Error at line 9: Condition must be bool
+Semantic Error at line 10: Undeclared variable 'y'
+
+Semantic Analysis:
+Total semantic errors: 5
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+x               int        0          1
+---------------------------------------------
+
+TAC generation skipped due to semantic errors.

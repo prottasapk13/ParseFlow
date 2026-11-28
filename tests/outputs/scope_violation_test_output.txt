@@ -1,0 +1,26 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  BLOCK: block
+    DECLARATION: int
+      IDENTIFIER: local
+      INTEGER: 10
+  PRINT: print
+    IDENTIFIER: local
+Semantic Error at line 4: Undeclared variable 'local'
+
+Semantic Analysis:
+Total semantic errors: 1
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+---------------------------------------------
+
+TAC generation skipped due to semantic errors.

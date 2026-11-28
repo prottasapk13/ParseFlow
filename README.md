@@ -46,9 +46,12 @@ ParseFlow/
 │   ├── symbol_table/
 │   └── tac/
 │
-├── examples/
 ├── tests/
+│   └── outputs/
 ├── docs/
+│   ├── PROJECT_REPORT.md
+│   └── TEST_RESULTS.md
+├── Makefile
 ├── README.md
 └── ParseFlow.exe
 ```
@@ -69,7 +72,7 @@ ParseFlow/
 - Block statements
 
 ### Operators
-- Arithmetic: `+`, `-`, `*`, `/`
+- Arithmetic: `+`, `-`, `*`, `/`, `%`
 - Relational: `<`, `>`, `<=`, `>=`
 - Equality: `==`, `!=`
 - Logical: `&&`, `||`, `!`
@@ -86,14 +89,29 @@ Install the following tools:
 
 Run these commands from the project root directory.
 
+### Build Using Makefile (MSYS2 UCRT64)
+
+```bash
+mingw32-make
+```
+
+To force a complete rebuild:
+
+```bash
+mingw32-make -B
+```
+
+To clean the build:
+
+```bash
+mingw32-make clean
+```
+
 ### Generate Parser Files
 
 ```bash
 bison -d src/parser/parser.y -o src/parser/parser.tab.c
 ```
-
-### Generate Lexer File
-
 ```bash
 flex -o src/lexer/lex.yy.c src/lexer/lexer.l
 ```

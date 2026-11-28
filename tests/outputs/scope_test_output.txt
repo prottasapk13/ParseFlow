@@ -1,0 +1,34 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: x
+    INTEGER: 10
+  BLOCK: block
+    DECLARATION: int
+      IDENTIFIER: y
+      INTEGER: 20
+    PRINT: print
+      IDENTIFIER: y
+  PRINT: print
+    IDENTIFIER: x
+  PRINT: print
+    IDENTIFIER: y
+Semantic Error at line 9: Undeclared variable 'y'
+
+Semantic Analysis:
+Total semantic errors: 1
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+x               int        0          1
+---------------------------------------------
+
+TAC generation skipped due to semantic errors.

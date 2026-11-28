@@ -1,0 +1,81 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: x
+  DECLARATION: int
+    IDENTIFIER: y
+  DECLARATION: bool
+    IDENTIFIER: flag
+  ASSIGNMENT: =
+    IDENTIFIER: x
+    INTEGER: 10
+  ASSIGNMENT: =
+    IDENTIFIER: y
+    INTEGER: 0
+  ASSIGNMENT: =
+    IDENTIFIER: flag
+    BOOLEAN: true
+  WHILE: while
+    BINARY: >
+      IDENTIFIER: x
+      INTEGER: 0
+    BLOCK: block
+      ASSIGNMENT: =
+        IDENTIFIER: y
+        BINARY: +
+          IDENTIFIER: y
+          IDENTIFIER: x
+      ASSIGNMENT: =
+        IDENTIFIER: x
+        BINARY: -
+          IDENTIFIER: x
+          INTEGER: 1
+  IF: if-else
+    BINARY: ==
+      IDENTIFIER: flag
+      BOOLEAN: true
+    BLOCK: block
+      PRINT: print
+        IDENTIFIER: y
+    BLOCK: block
+      PRINT: print
+        IDENTIFIER: x
+
+Semantic Analysis:
+No semantic errors found!
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+flag            bool       0          3
+y               int        0          2
+x               int        0          1
+---------------------------------------------
+
+Three Address Code:
+x = 10
+y = 0
+flag = true
+L1:
+t1 = x > 0
+ifFalse t1 goto L2
+t2 = y + x
+y = t2
+t3 = x - 1
+x = t3
+goto L1
+L2:
+t4 = flag == true
+ifFalse t4 goto L3
+print y
+goto L4
+L3:
+print x
+L4:

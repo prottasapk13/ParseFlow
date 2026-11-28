@@ -1,0 +1,18 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis completed with errors (recovered).
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: a
+    INTEGER: 10
+  DECLARATION: int
+    IDENTIFIER: c
+    INTEGER: 30
+  PRINT: print
+    IDENTIFIER: c
+
+Semantic analysis and TAC generation skipped due to syntax errors.

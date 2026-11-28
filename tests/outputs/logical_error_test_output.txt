@@ -1,0 +1,32 @@
+ParseFlow Compiler
+Enter your code:
+
+
+Syntax analysis successful!
+
+Abstract Syntax Tree:
+PROGRAM: Program
+  DECLARATION: int
+    IDENTIFIER: x
+    INTEGER: 10
+  DECLARATION: bool
+    IDENTIFIER: flag
+  ASSIGNMENT: =
+    IDENTIFIER: flag
+    BINARY: &&
+      IDENTIFIER: x
+      BOOLEAN: true
+Semantic Error at line 4: Logical operators require bool operands
+
+Semantic Analysis:
+Total semantic errors: 1
+
+Symbol Table
+---------------------------------------------
+Name            Type       Scope      Line
+---------------------------------------------
+flag            bool       0          2
+x               int        0          1
+---------------------------------------------
+
+TAC generation skipped due to semantic errors.

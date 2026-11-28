@@ -1,0 +1,4 @@
+bool flag = true;
+int result;
+
+result = flag + 5;
